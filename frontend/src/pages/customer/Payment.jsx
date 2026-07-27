@@ -8,6 +8,14 @@ function Payment() {
 
   const { orderId, totalAmount } = location.state || {};
 
+  const paymentMethods = [
+    { label: "UPI", value: "UPI" },
+    { label: "Credit Card", value: "CARD" },
+    { label: "Debit Card", value: "CARD" },
+    { label: "Net Banking", value: "NET_BANKING" },
+    { label: "Cash on Delivery", value: "COD" },
+  ];
+
   const [paymentMethod, setPaymentMethod] = useState("UPI");
   const [loading, setLoading] = useState(false);
 
@@ -50,15 +58,12 @@ function Payment() {
 
   return (
     <div className="max-w-3xl mx-auto p-8">
-
       <div className="bg-white rounded-2xl shadow-lg p-8">
-
         <h1 className="text-3xl font-bold mb-8">
           Payment
         </h1>
 
         <div className="space-y-5">
-
           <div>
             <p className="text-slate-500">
               Order ID
@@ -80,42 +85,29 @@ function Payment() {
           </div>
 
           <div>
-
             <p className="font-semibold mb-3">
               Select Payment Method
             </p>
 
             <div className="space-y-3">
-
-              {[
-                "UPI",
-                "Credit Card",
-                "Debit Card",
-                "Net Banking",
-                "Cash on Delivery",
-              ].map((method) => (
-
+              {paymentMethods.map((method) => (
                 <label
-                  key={method}
+                  key={method.label}
                   className="flex items-center gap-3 border rounded-xl p-4 cursor-pointer hover:bg-slate-50"
                 >
                   <input
                     type="radio"
-                    value={method}
-                    checked={paymentMethod === method}
+                    value={method.value}
+                    checked={paymentMethod === method.value}
                     onChange={(e) =>
                       setPaymentMethod(e.target.value)
                     }
                   />
 
-                  {method}
-
+                  {method.label}
                 </label>
-
               ))}
-
             </div>
-
           </div>
 
           <button
@@ -125,11 +117,8 @@ function Payment() {
           >
             {loading ? "Processing..." : "Pay Now"}
           </button>
-
         </div>
-
       </div>
-
     </div>
   );
 }
