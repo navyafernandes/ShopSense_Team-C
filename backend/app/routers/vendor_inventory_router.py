@@ -8,7 +8,7 @@ from app.enums.user_role import UserRole
 from app.models.user import User
 
 from app.schemas.vendor_inventory_schema import (
-    VendorInventoryResponse,
+    VendorInventoryPageResponse,
 )
 
 from app.services.vendor_inventory_service import (
@@ -23,7 +23,7 @@ router = APIRouter(
 
 @router.get(
     "",
-    response_model=list[VendorInventoryResponse],
+    response_model=VendorInventoryPageResponse,
 )
 def inventory(
     db: Session = Depends(get_db),

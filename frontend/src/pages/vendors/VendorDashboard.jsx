@@ -9,7 +9,6 @@ import RevenueLineChart from "../../components/vendor/charts/RevenueLineChart";
 import RevenuePieChart from "../../components/vendor/charts/RevenuePieChart";
 import TopProductsChart from "../../components/vendor/charts/TopProductsChart";
 import MarketplaceHealthCard from "../../components/vendor/charts/MarketplaceHealthCard";
-import AIInsightsCard from "../../components/vendor/charts/AIInsightsCard";
 
 
 
@@ -152,15 +151,6 @@ setAnalytics(analyticsRes.data);
 
 </div>
 
-{/* AI Insights */}
-
-<div className="mt-10">
-
-  <AIInsightsCard
-    insights={analytics.ai_insights}
-  />
-
-</div>
 
       {/* Inventory Forecast */}
       <div className="mt-10 bg-white rounded-xl shadow-md p-6">

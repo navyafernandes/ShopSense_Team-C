@@ -13,13 +13,17 @@ import VendorProducts from "./pages/vendors/VendorProducts";
 import VendorInventory from "./pages/vendors/VendorInventory";
 import VendorOrders from "./pages/vendors/VendorOrders";
 import VendorTransactions from "./pages/vendors/VendorTransactions";
+import BusinessAnalytics from "./pages/vendors/BusinessAnalytics";
 
 import CustomerProducts from "./pages/customer/CustomerProducts";
+import CustomerAnalytics from "./pages/customer/CustomerAnalytics";
 import Cart from "./pages/customer/Cart";
 import Checkout from "./pages/customer/Checkout";
 import Payment from "./pages/customer/Payment";
 import MyOrders from "./pages/customer/MyOrders";
 import Profile from "./pages/customer/Profile";
+
+import AdminIntelligence from "./pages/admin/AdminIntelligence";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
@@ -77,6 +81,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+           path="/admin/intelligence"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <MainLayout>
+                <AdminIntelligence />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
 
         {/* ================= VENDOR ================= */}
 
@@ -134,6 +149,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+  path="/vendor/analytics"
+  element={
+    <ProtectedRoute allowedRoles={["VENDOR"]}>
+      <MainLayout>
+        <BusinessAnalytics />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
 
         {/* ================= CUSTOMER ================= */}
 
@@ -193,6 +219,17 @@ function App() {
         />
 
         <Route
+          path="/customer/analytics"
+          element={
+            <ProtectedRoute allowedRoles={["CUSTOMER"]}>
+              <MainLayout>
+                <CustomerAnalytics />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
   path="/customer/profile"
   element={
     <ProtectedRoute allowedRoles={["CUSTOMER"]}>
@@ -202,6 +239,8 @@ function App() {
     </ProtectedRoute>
   }
 />
+
+
       </Routes>
     </BrowserRouter>
   );

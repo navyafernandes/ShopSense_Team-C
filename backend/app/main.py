@@ -40,11 +40,19 @@ from app.routers.vendor_transaction_router import (
     router as vendor_transaction_router,
 )
 
+from app.routers.admin_intelligence_router import (
+    router as admin_intelligence_router
+)
+
 from app.routers import customer_router
 
 from app.routers import vendor_analytics
 
 from app.routers import recommendation_router
+
+from app.routers.customer_analytics_router import (
+    router as customer_analytics_router
+)
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -90,5 +98,7 @@ app.include_router(vendor_inventory_router)
 app.include_router(vendor_order_router)
 app.include_router(vendor_transaction_router)
 app.include_router(customer_router.router)
+app.include_router(customer_analytics_router)
 app.include_router(vendor_analytics.router)
 app.include_router(recommendation_router.router)
+app.include_router(admin_intelligence_router)

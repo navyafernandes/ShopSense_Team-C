@@ -5,7 +5,6 @@ from app.models.product import Product
 from app.models.vendor import Vendor
 
 
-
 def create_inventory(
     db: Session,
     inventory_data,
@@ -69,12 +68,14 @@ def get_low_stock_products(db: Session):
         .all()
     )
 
+
 def update_inventory(
     db: Session,
     product_id: int,
     inventory_data,
     user
 ):
+
     vendor = (
         db.query(Vendor)
         .filter(Vendor.user_id == user.user_id)
@@ -114,9 +115,38 @@ def update_inventory(
 
     return inventory
 
+
 def get_all_inventory(db: Session):
 
-    return db.query(Inventory).all()
+    inventory = db.query(Inventory).all()
+
+    total_products = len(inventory)
+
+    healthy = 0
+    low_stock = 0
+    critical = 0
+
+    for item in inventory:
+
+        if item.stock_quantity <= 0:
+            critical += 1
+
+        elif item.stock_quantity <= item.reorder_level:
+            low_stock += 1
+
+        else:
+            healthy += 1
+
+    return {
+        "summary": {
+            "total_products": total_products,
+            "healthy": healthy,
+            "low_stock": low_stock,
+            "critical": critical,
+        },
+        
+        "products": inventory,
+    }
 
 
 def get_inventory_by_product(

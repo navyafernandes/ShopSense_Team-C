@@ -25,6 +25,10 @@ from app.services.dashboard_analytics_service import (
     get_vendor_dashboard_analytics,
 )
 
+from app.services.vendor_ai_service import (
+    get_vendor_ai_analysis,
+)
+
 router = APIRouter(
     prefix="/vendor/dashboard",
     tags=["Vendor Dashboard"],
@@ -97,3 +101,28 @@ def get_dashboard_analytics(
         )
 
     return analytics
+
+@router.get("/ai-analysis")
+def get_ai_analysis(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+
+    if current_user.role != UserRole.VENDOR:
+        raise HTTPException(
+            status_code=403,
+            detail="Only vendors can access this feature.",
+        )
+
+    analysis = get_vendor_ai_analysis(
+        db,
+        current_user,
+    )
+
+    if analysis is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Vendor not found.",
+        )
+
+    return analysis

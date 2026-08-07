@@ -59,7 +59,8 @@ def get_vendor_transactions(db: Session, user):
     )
 
     return [
-        {
+        {   
+            "order_item_id": order_item.order_item_id,
             "payment_id": payment.payment_id,
             "order_id": order.order_id,
             "customer_name": customer_user.full_name,

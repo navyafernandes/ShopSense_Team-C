@@ -5,6 +5,7 @@ import {
   FaShoppingCart,
   FaUsers,
   FaSignOutAlt,
+  FaBrain,
 } from "react-icons/fa";
 
 import { NavLink, useNavigate } from "react-router-dom";
@@ -44,6 +45,11 @@ function Sidebar() {
         <NavLink to="/admin/dashboard" className={navItemClass}>
           <FaChartLine size={18} />
           <span>Analytics</span>
+        </NavLink>
+        
+        <NavLink to="/admin/intelligence" className={navItemClass}>
+          <FaBrain size={18} />
+          <span>Marketplace Intelligence</span>
         </NavLink>
 
         <NavLink to="/vendors" className={navItemClass}>

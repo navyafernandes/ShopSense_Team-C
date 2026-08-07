@@ -5,13 +5,10 @@ import CustomerSidebar from "../components/sidebar/CustomerSidebar";
 import Navbar from "../components/Navbar";
 
 function MainLayout({ children }) {
-
   const role = localStorage.getItem("role");
 
   const renderSidebar = () => {
-
     switch (role) {
-
       case "ADMIN":
         return <AdminSidebar />;
 
@@ -27,20 +24,16 @@ function MainLayout({ children }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-100">
-
+    <div className="flex h-screen bg-slate-100 overflow-hidden">
       {renderSidebar()}
 
-      <div className="flex-1 flex flex-col">
-
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar />
 
-        <main className="p-6">
+        <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
-
       </div>
-
     </div>
   );
 }

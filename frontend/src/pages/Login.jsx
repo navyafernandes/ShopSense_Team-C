@@ -19,10 +19,26 @@ function Login() {
         password,
       });
 
-const { access_token, role } = response.data;
+const {
+  access_token,
+  role,
+  name,
+} = response.data;
 
-localStorage.setItem("access_token", access_token);
-localStorage.setItem("role", role);
+localStorage.setItem(
+  "access_token",
+  access_token
+);
+
+localStorage.setItem(
+  "role",
+  role
+);
+
+localStorage.setItem(
+  "name",
+  name
+);
 
 api.defaults.headers.common[
   "Authorization"

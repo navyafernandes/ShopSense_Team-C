@@ -25,8 +25,17 @@ def get_customer_segments(db: Session, current_user: User):
         .first()
     )
 
+
     if not vendor:
-        return []
+        return CustomerSegmentationResponse(
+           total_customers=0,
+           premium_customers=0,
+           regular_customers=0,
+           new_customers=0,
+           inactive_customers=0,
+           silhouette_score=0.0,
+           customers=[]
+        )
 
     customer_data = (
         db.query(
@@ -57,8 +66,17 @@ def get_customer_segments(db: Session, current_user: User):
         .all()
     )
 
+
     if not customer_data:
-        return []
+        return CustomerSegmentationResponse(
+           total_customers=0,
+           premium_customers=0,
+           regular_customers=0,
+           new_customers=0,
+           inactive_customers=0,
+           silhouette_score=0.0,
+           customers=[]
+        )
 
     rows = []
     today = datetime.utcnow()

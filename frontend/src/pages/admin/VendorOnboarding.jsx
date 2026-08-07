@@ -46,6 +46,7 @@ function VendorOnboarding() {
   return (
     <div>
 
+      {/* Header */}
       <div className="flex justify-between items-center mb-8">
 
         <div>
@@ -67,6 +68,7 @@ function VendorOnboarding() {
 
       </div>
 
+      {/* Search */}
       <input
         type="text"
         placeholder="Search business..."
@@ -75,6 +77,7 @@ function VendorOnboarding() {
         onChange={(e) => setSearch(e.target.value)}
       />
 
+      {/* Table */}
       <div className="bg-white rounded-2xl shadow border overflow-hidden">
 
         <table className="w-full">
@@ -83,15 +86,25 @@ function VendorOnboarding() {
 
             <tr>
 
-              <th className="text-left p-4">Business</th>
+              <th className="text-left p-4">
+                Business
+              </th>
 
-              <th className="text-left p-4">Type</th>
+              <th className="text-left p-4">
+                Type
+              </th>
 
-              <th className="text-left p-4">GST</th>
+              <th className="text-left p-4">
+                GST
+              </th>
 
-              <th className="text-left p-4">Status</th>
+              <th className="text-left p-4">
+                Status
+              </th>
 
-              <th className="text-center p-4">Actions</th>
+              <th className="text-center p-4">
+                Actions
+              </th>
 
             </tr>
 
@@ -103,10 +116,10 @@ function VendorOnboarding() {
 
               <tr
                 key={vendor.vendor_id}
-                className="border-t hover:bg-slate-50"
+                className="border-t hover:bg-slate-50 transition"
               >
 
-                <td className="p-4">
+                <td className="p-4 font-medium">
                   {vendor.business_name}
                 </td>
 
@@ -126,31 +139,64 @@ function VendorOnboarding() {
 
                 <td className="p-4">
 
-                  <div className="flex justify-center gap-3">
+                  <div className="flex justify-center">
 
-                    <button
-                      onClick={() =>
-                        updateStatus(
-                          vendor.vendor_id,
-                          "APPROVED"
-                        )
-                      }
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
-                    >
-                      Approve
-                    </button>
+                    {/* Pending */}
+                    {vendor.verification_status === "PENDING" && (
 
-                    <button
-                      onClick={() =>
-                        updateStatus(
-                          vendor.vendor_id,
-                          "REJECTED"
-                        )
-                      }
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-                    >
-                      Reject
-                    </button>
+                      <div className="flex gap-3">
+
+                        <button
+                          onClick={() =>
+                            updateStatus(
+                              vendor.vendor_id,
+                              "APPROVED"
+                            )
+                          }
+                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+                        >
+                          Approve
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            updateStatus(
+                              vendor.vendor_id,
+                              "REJECTED"
+                            )
+                          }
+                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
+                        >
+                          Reject
+                        </button>
+
+                      </div>
+
+                    )}
+
+                    {/* Approved */}
+                    {vendor.verification_status === "APPROVED" && (
+
+                      <button
+                        disabled
+                        className="bg-green-100 text-green-700 px-5 py-2 rounded-lg font-semibold cursor-default"
+                      >
+                        ✓ Approved
+                      </button>
+
+                    )}
+
+                    {/* Rejected */}
+                    {vendor.verification_status === "REJECTED" && (
+
+                      <button
+                        disabled
+                        className="bg-red-100 text-red-700 px-5 py-2 rounded-lg font-semibold cursor-default"
+                      >
+                        Rejected
+                      </button>
+
+                    )}
 
                   </div>
 

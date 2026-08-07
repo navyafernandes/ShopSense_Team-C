@@ -38,5 +38,5 @@ class InventoryAnalytics(BaseModel):
 
 
 class RevenueTrend(BaseModel):
-    date: date
-    revenue: Decimal
+    date: str
+    revenue: float

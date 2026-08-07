@@ -13,13 +13,24 @@ function VendorTransactions() {
   }, []);
 
   const fetchTransactions = async () => {
-    try {
-      const response = await api.get("/vendor/transactions");
-      setTransactions(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    const response = await api.get("/vendor/transactions");
+
+    console.table(response.data);
+
+    const ids = response.data.map((t) => t.payment_id);
+    const duplicates = ids.filter(
+      (id, index) => ids.indexOf(id) !== index
+    );
+
+    console.log("Duplicate Payment IDs:", duplicates);
+
+    setTransactions(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+  
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(
@@ -123,7 +134,7 @@ function VendorTransactions() {
               filteredTransactions.map((transaction) => (
 
                 <tr
-                  key={transaction.payment_id}
+                  key={transaction.order_item_id}
                   className="border-t hover:bg-slate-50 transition"
                 >
 

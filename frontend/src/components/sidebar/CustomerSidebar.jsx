@@ -5,6 +5,7 @@ import {
   FaClipboardList,
   FaUserCircle,
   FaSignOutAlt,
+  FaChartPie,
 } from "react-icons/fa";
 
 import { NavLink, useNavigate } from "react-router-dom";
@@ -55,6 +56,11 @@ function CustomerSidebar() {
         <NavLink to="/customer/orders" className={navItemClass}>
           <FaClipboardList size={18} />
           <span>My Orders</span>
+        </NavLink>
+
+        <NavLink to="/customer/analytics" className={navItemClass}>
+          <FaChartPie size={18} />
+          <span>Spending Insights</span>
         </NavLink>
 
         <NavLink to="/customer/profile" className={navItemClass}>

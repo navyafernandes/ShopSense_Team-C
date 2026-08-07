@@ -8,6 +8,7 @@ from app.models.product import Product
 from app.models.order_item import OrderItem
 from app.models.order import Order
 from app.models.category import Category
+from app.services.benchmark_service import get_vendor_benchmark
 
 
 def get_vendor_dashboard_analytics(db: Session, user):
@@ -274,6 +275,13 @@ def get_vendor_dashboard_analytics(db: Session, user):
             }
         )
 
+
+    benchmark = get_vendor_benchmark(
+    db,
+    vendor.vendor_id,
+    )
+
+
     # ====================================================
     # Final Response
     # ====================================================
@@ -286,5 +294,6 @@ def get_vendor_dashboard_analytics(db: Session, user):
             "score": score,
             "status": status,
         },
+        "benchmark": benchmark,
         "ai_insights": ai_insights,
     }

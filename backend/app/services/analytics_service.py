@@ -204,22 +204,41 @@ def get_revenue_trend(db: Session):
 
     results = (
         db.query(
-            func.date(Order.order_date).label("date"),
+            func.extract("year", Order.order_date).label("year"),
+            func.extract("month", Order.order_date).label("month"),
             func.sum(Order.total_amount).label("revenue")
         )
         .group_by(
-            func.date(Order.order_date)
+            func.extract("year", Order.order_date),
+            func.extract("month", Order.order_date)
         )
         .order_by(
-            func.date(Order.order_date)
+            func.extract("year", Order.order_date),
+            func.extract("month", Order.order_date)
         )
         .all()
     )
 
+    month_names = [
+        "",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+    ]
+
     return [
         {
-            "date": row.date,
-            "revenue": row.revenue
+            "date": f"{month_names[int(row.month)]} {int(row.year)}",
+            "revenue": float(row.revenue)
         }
         for row in results
     ]
