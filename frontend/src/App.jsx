@@ -24,6 +24,7 @@ import MyOrders from "./pages/customer/MyOrders";
 import Profile from "./pages/customer/Profile";
 
 import AdminIntelligence from "./pages/admin/AdminIntelligence";
+import ExecutiveBI from "./pages/admin/ExecutiveBI";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./layouts/MainLayout";
@@ -87,6 +88,17 @@ function App() {
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <MainLayout>
                 <AdminIntelligence />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+           path="/admin/executive-bi"
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <MainLayout>
+                <ExecutiveBI />
               </MainLayout>
             </ProtectedRoute>
           }
