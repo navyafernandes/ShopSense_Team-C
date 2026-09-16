@@ -19,7 +19,7 @@ jobs:
           POSTGRES_PASSWORD: Postgres@123
           POSTGRES_DB: shopsense
         ports:
-          - 5432:5432
+          - 5433:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -44,7 +44,7 @@ jobs:
 
       - name: Run Backend Tests
         env:
-          DATABASE_URL: postgresql://postgres:Postgres%40123@127.0.0.1:5432/shopsense
+          DATABASE_URL: postgresql://postgres:Postgres%40123@127.0.0.1:5433/shopsense
           SECRET_KEY: test_secret_key_ci
           ACCESS_TOKEN_EXPIRE_MINUTES: 60
           PYTHONPATH: ${{ github.workspace }}/backend
