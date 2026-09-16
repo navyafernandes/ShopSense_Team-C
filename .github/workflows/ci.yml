@@ -44,7 +44,7 @@ jobs:
 
       - name: Run Backend Tests
         env:
-          DATABASE_URL: postgresql://postgres:Postgres%40123@localhost:5432/shopsense
+          DATABASE_URL: postgresql://postgres:Postgres%40123@127.0.0.1:5432/shopsense
           SECRET_KEY: test_secret_key_ci
           ACCESS_TOKEN_EXPIRE_MINUTES: 60
           PYTHONPATH: ${{ github.workspace }}/backend
