@@ -34,8 +34,8 @@ def run_seed():
     
     db = SessionLocal()
     try:
-        seed_admin(db)
         seed_users(db)
+        seed_admin(db)
         seed_products(db)
         seed_inventory(db)
         seed_orders(db)
