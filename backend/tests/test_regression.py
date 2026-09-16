@@ -1,6 +1,33 @@
-import requests
+import sys
+from pathlib import Path
 
+backend_dir = str(Path(__file__).resolve().parent.parent)
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
+from fastapi.testclient import TestClient
+from app.main import app
+
+_client = TestClient(app)
+
+class _UniversalClient:
+    def get(self, url, **kwargs):
+        path = url.replace("http://127.0.0.1:8000", "").replace("http://localhost:8000", "")
+        return _client.get(path or "/", **kwargs)
+
+    def post(self, url, **kwargs):
+        path = url.replace("http://127.0.0.1:8000", "").replace("http://localhost:8000", "")
+        return _client.post(path or "/", **kwargs)
+
+    def put(self, url, **kwargs):
+        path = url.replace("http://127.0.0.1:8000", "").replace("http://localhost:8000", "")
+        return _client.put(path or "/", **kwargs)
+
+    def delete(self, url, **kwargs):
+        path = url.replace("http://127.0.0.1:8000", "").replace("http://localhost:8000", "")
+        return _client.delete(path or "/", **kwargs)
+
+requests = _UniversalClient()
 BASE_URL = "http://127.0.0.1:8000"
 
 
