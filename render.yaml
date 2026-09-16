@@ -26,8 +26,7 @@ services:
         value: 60
 
       - key: CORS_ORIGINS
-        value: http://localhost:5173,http://localhost:80,http://127.0.0.1:5173,https://shopsense-frontend.onrender.com
-
+        value: http://localhost:5173,http://localhost:80,http://127.0.0.1:5173,https://shopsense-frontend-2l8h.onrender.com
   # ----------------------------------------------------
   # 2. React / Vite Frontend Static Site
   # ----------------------------------------------------
@@ -44,7 +43,7 @@ services:
 
     envVars:
       - key: VITE_API_URL
-        value: https://shopsense-backend.onrender.com
+        value: https://shopsense-backend-wp37.onrender.com
 
 databases:
   # ----------------------------------------------------
