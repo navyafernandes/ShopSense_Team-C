@@ -47,5 +47,4 @@ databases:
   # ----------------------------------------------------
   - name: shopsense-db
     databaseName: shopsense
-    user: postgres
     plan: free
