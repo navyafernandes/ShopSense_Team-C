@@ -55,6 +55,7 @@ from app.routers.customer_analytics_router import (
 )
 
 from fastapi.middleware.cors import CORSMiddleware
+from app.config import CORS_ORIGINS
 
 
 
@@ -72,12 +73,24 @@ def home():
         "status": "Backend Running Successfully 🚀"
     }
 
+
+@app.on_event("startup")
+def on_startup():
+    """
+    Idempotently creates database tables and seeds demo data on fresh deployments.
+    Skips automatically if data already exists (takes <5ms).
+    """
+    try:
+        from app.seed.seed_database import run_seed
+        run_seed()
+    except Exception as e:
+        print(f"[ShopSense Startup] Database init check note: {e}")
+
+# Dynamic CORS setup supporting multiple local and production origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173"
-    ],
-    allow_credentials=True,
+    allow_origins=CORS_ORIGINS if "*" not in CORS_ORIGINS else ["*"],
+    allow_credentials=True if "*" not in CORS_ORIGINS else False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

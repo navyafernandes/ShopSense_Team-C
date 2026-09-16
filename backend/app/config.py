@@ -14,6 +14,9 @@ DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql://postgres:Postgres%40123@localhost:5432/shopsense"
 )
+# Render and other cloud providers use postgres:// which SQLAlchemy 2.0 requires as postgresql://
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 SECRET_KEY = os.getenv(
     "SECRET_KEY",
@@ -27,3 +30,19 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
 )
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+
+# Parse CORS origins from environment variable (comma-separated), with safe defaults
+_raw_cors = os.getenv("CORS_ORIGINS", "")
+if _raw_cors.strip():
+    CORS_ORIGINS = [origin.strip() for origin in _raw_cors.split(",") if origin.strip()]
+else:
+    CORS_ORIGINS = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:80",
+        "http://127.0.0.1:80",
+        "http://localhost",
+        "http://127.0.0.1",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
