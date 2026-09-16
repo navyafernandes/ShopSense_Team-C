@@ -47,13 +47,12 @@ jobs:
           DATABASE_URL: postgresql://postgres:Postgres%40123@localhost:5432/shopsense
           SECRET_KEY: test_secret_key_ci
           ACCESS_TOKEN_EXPIRE_MINUTES: 60
-          PYTHONPATH: backend
+          PYTHONPATH: ${{ github.workspace }}/backend
         run: |
-          cd backend
-          python -m app.seed.seed_database
-          uvicorn app.main:app --host 127.0.0.1 --port 8000 &
-          sleep 4
-          cd ..
+          python -c "import sys; sys.path.insert(0, 'backend'); from app.seed.seed_database import run_seed; run_seed()"
+          nohup uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000 > uvicorn.log 2>&1 &
+          sleep 5
+          cat uvicorn.log || true
           pytest backend/tests/ -v
 
   frontend-build:
