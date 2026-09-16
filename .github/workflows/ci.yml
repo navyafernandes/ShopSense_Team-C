@@ -47,7 +47,13 @@ jobs:
           DATABASE_URL: postgresql://postgres:Postgres%40123@localhost:5432/shopsense
           SECRET_KEY: test_secret_key_ci
           ACCESS_TOKEN_EXPIRE_MINUTES: 60
+          PYTHONPATH: backend
         run: |
+          cd backend
+          python -m app.seed.seed_database
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          sleep 4
+          cd ..
           pytest backend/tests/ -v
 
   frontend-build:
