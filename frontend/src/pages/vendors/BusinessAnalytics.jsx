@@ -4,6 +4,7 @@ import api from "../../services/api";
 import {
   FileDown,
   Loader2,
+  Download,
 } from "lucide-react";
 
 import BenchmarkCard from "../../components/vendor/charts/BenchmarkCard";
@@ -11,6 +12,7 @@ import BusinessInsightsCard from "../../components/vendor/charts/BusinessInsight
 import AIBusinessAdvisorCard from "../../components/vendor/analytics/AIBusinessAdvisorCard";
 
 import { generateBusinessReport } from "../../utils/pdfReport";
+import { downloadCSV } from "../../utils/csvExport";
 
 function BusinessAnalytics() {
   const [analytics, setAnalytics] =
@@ -91,6 +93,48 @@ function BusinessAnalytics() {
       }
     };
 
+  const handleExportCSV = () => {
+    const rows = [
+      ["ShopSense Vendor Business Analytics Report"],
+      ["Generated Date", new Date().toLocaleString("en-IN")],
+      [],
+      ["Benchmark Metric", "Vendor Value", "Marketplace Benchmark"],
+      [
+        "Vendor Revenue",
+        analytics.benchmark?.vendor_revenue || 0,
+        analytics.benchmark?.avg_marketplace_revenue || 0,
+      ],
+      [
+        "Vendor Orders",
+        analytics.benchmark?.vendor_orders || 0,
+        analytics.benchmark?.avg_marketplace_orders || 0,
+      ],
+      [
+        "Average Order Value",
+        analytics.benchmark?.vendor_aov || 0,
+        analytics.benchmark?.avg_marketplace_aov || 0,
+      ],
+      [],
+      ["Top Products", "Units Sold", "Revenue (INR)"],
+      ...(analytics.top_products || []).map((p) => [
+        p.product_name,
+        p.units_sold,
+        p.revenue,
+      ]),
+      [],
+      ["Category Revenue Breakdown", "Revenue (INR)"],
+      ...(analytics.revenue_by_category || []).map((c) => [
+        c.category_name,
+        c.revenue,
+      ]),
+    ];
+
+    downloadCSV(
+      `Vendor_Business_Analytics_${new Date().toISOString().slice(0, 10)}.csv`,
+      rows
+    );
+  };
+
   return (
     <div className="space-y-10">
 
@@ -112,32 +156,41 @@ function BusinessAnalytics() {
 
         </div>
 
-        {/* Export Button */}
+        {/* Export Buttons */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center justify-center gap-2 rounded-xl bg-white border border-slate-300 px-4 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:shadow-md"
+          >
+            <Download size={18} />
+            Export CSV
+          </button>
 
-        <button
-          onClick={handleExport}
-          disabled={exporting}
-          className="flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
-        >
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+          >
 
-          {exporting ? (
-            <>
-              <Loader2
-                size={18}
-                className="animate-spin"
-              />
+            {exporting ? (
+              <>
+                <Loader2
+                  size={18}
+                  className="animate-spin"
+                />
 
-              Generating Report...
-            </>
-          ) : (
-            <>
-              <FileDown size={18} />
+                Generating PDF...
+              </>
+            ) : (
+              <>
+                <FileDown size={18} />
 
-              Export Report
-            </>
-          )}
+                Export PDF
+              </>
+            )}
 
-        </button>
+          </button>
+        </div>
 
       </div>
 

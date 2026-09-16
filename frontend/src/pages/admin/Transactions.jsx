@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { Download } from "lucide-react";
 
 import api from "../../services/api";
+import { downloadCSV } from "../../utils/csvExport";
 
 import PageHeader from "../../components/common/PageHeader";
 import SearchInput from "../../components/common/SearchInput";
@@ -40,6 +42,35 @@ function Transactions() {
     });
   }, [transactions, search]);
 
+  const handleExportCSV = () => {
+    const headers = [
+      "Order ID",
+      "Customer Name",
+      "Vendor Name",
+      "Amount (INR)",
+      "Payment Method",
+      "Payment Status",
+      "Order Status",
+      "Payment Date",
+    ];
+
+    const dataRows = filteredTransactions.map((t) => [
+      t.order_id,
+      t.customer_name,
+      t.vendor_name,
+      t.total_amount,
+      t.payment_method || "N/A",
+      t.payment_status || "PENDING",
+      t.order_status,
+      t.payment_date ? new Date(t.payment_date).toISOString() : "N/A",
+    ]);
+
+    downloadCSV(
+      `ShopSense_Transactions_${new Date().toISOString().slice(0, 10)}.csv`,
+      [headers, ...dataRows]
+    );
+  };
+
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -49,11 +80,20 @@ function Transactions() {
         title="Marketplace Transactions"
         subtitle="Monitor orders and payments across the marketplace"
       >
-        <SearchInput
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search orders..."
-        />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl transition shadow-sm"
+          >
+            <Download size={16} />
+            Export CSV
+          </button>
+          <SearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search orders..."
+          />
+        </div>
       </PageHeader>
 
       {filteredTransactions.length === 0 ? (

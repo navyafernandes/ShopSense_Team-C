@@ -303,35 +303,44 @@ def get_customer_analytics(db: Session, user):
         })
 
     if total_spent > 50000:
-
         insights.append({
             "title": "Premium Shopper",
             "description": "You are among the platform's high-value customers.",
             "level": "SUCCESS",
         })
+    fav_cat = category_breakdown[0]["category"] if category_breakdown else "N/A"
+    fav_brand = brand_breakdown[0]["brand"] if brand_breakdown else "N/A"
+
+    if total_spent >= 100000:
+        segment = "Premium Champion"
+    elif total_orders >= 5:
+        segment = "Loyal Customer"
+    elif total_orders >= 1:
+        segment = "Active Shopper"
+    else:
+        segment = "New Customer"
+
+    # Repeat purchase calculation
+    repeat_rate = 0.0
+    if total_orders > 1:
+        repeat_rate = round(min(100.0, ((total_orders - 1) / total_orders) * 100), 1)
+
+    summary["favorite_category"] = fav_cat
+    summary["favorite_brand"] = fav_brand
+    summary["customer_segment"] = segment
+    summary["repeat_purchase_rate"] = repeat_rate
 
     # ==========================================
-    # RECOMMENDATIONS
+    # REAL PRODUCT RECOMMENDATIONS
     # ==========================================
+    from app.services.recommendation_service import get_recommendations
+    try:
+        rec_data = get_recommendations(db, customer.customer_id)
+        recommended_products = rec_data.recommended_products
+    except Exception as e:
+        recommended_products = []
 
     recommendations = []
-
-    if category_breakdown:
-
-        recommendations.append({
-            "title": "Explore Similar Products",
-            "description": f"Discover more products in {category_breakdown[0]['category']}.",
-        })
-
-    recommendations.append({
-        "title": "Watch for Seasonal Sales",
-        "description": "Save more by shopping during upcoming marketplace sales.",
-    })
-
-    recommendations.append({
-        "title": "Track Your Spending",
-        "description": "Review your monthly spending trends regularly to manage your budget.",
-    })
 
     # ==========================================
     # RESPONSE
@@ -345,4 +354,5 @@ def get_customer_analytics(db: Session, user):
         "order_status": order_status,
         "ai_insights": insights,
         "recommendations": recommendations,
+        "recommended_products": recommended_products,
     }

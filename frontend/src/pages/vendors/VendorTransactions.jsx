@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, IndianRupee, CreditCard } from "lucide-react";
+import { Search, IndianRupee, CreditCard, Download } from "lucide-react";
 
 import api from "../../services/api";
 import StatCard from "../../components/StatCard";
+import { downloadCSV } from "../../utils/csvExport";
 
 function VendorTransactions() {
   const [transactions, setTransactions] = useState([]);
@@ -15,23 +16,12 @@ function VendorTransactions() {
   const fetchTransactions = async () => {
   try {
     const response = await api.get("/vendor/transactions");
-
-    console.table(response.data);
-
-    const ids = response.data.map((t) => t.payment_id);
-    const duplicates = ids.filter(
-      (id, index) => ids.indexOf(id) !== index
-    );
-
-    console.log("Duplicate Payment IDs:", duplicates);
-
     setTransactions(response.data);
   } catch (error) {
     console.error(error);
   }
 };
   
-
   const filteredTransactions = useMemo(() => {
     return transactions.filter(
       (transaction) =>
@@ -49,17 +39,54 @@ function VendorTransactions() {
     0
   );
 
+  const handleExportCSV = () => {
+    const headers = [
+      "Payment ID",
+      "Customer Name",
+      "Product Name",
+      "Amount (INR)",
+      "Payment Method",
+      "Payment Status",
+      "Payment Date",
+    ];
+
+    const dataRows = filteredTransactions.map((t) => [
+      t.payment_id,
+      t.customer_name,
+      t.product_name,
+      t.amount,
+      t.payment_method || "N/A",
+      t.payment_status || "SUCCESS",
+      t.payment_date ? new Date(t.payment_date).toISOString() : "N/A",
+    ]);
+
+    downloadCSV(
+      `Vendor_Transactions_${new Date().toISOString().slice(0, 10)}.csv`,
+      [headers, ...dataRows]
+    );
+  };
+
   return (
     <div>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-slate-900">
-          Transactions
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-slate-900">
+            Transactions
+          </h1>
 
-        <p className="mt-2 text-slate-500">
-          View all successful payments received for your products.
-        </p>
+          <p className="mt-2 text-slate-500">
+            View all successful payments received for your products.
+          </p>
+        </div>
+
+        <button
+          onClick={handleExportCSV}
+          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl transition shadow-sm self-start sm:self-auto"
+        >
+          <Download size={16} />
+          Export CSV
+        </button>
       </div>
 
       {/* Stats */}

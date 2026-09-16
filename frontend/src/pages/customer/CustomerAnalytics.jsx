@@ -44,13 +44,25 @@ function CustomerAnalytics() {
   };
 
   if (loading) {
-
     return (
-      <div className="p-10 text-lg">
-        Loading Spending Insights...
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-slate-500 font-medium text-sm">Loading Spending Insights...</p>
+        </div>
       </div>
     );
+  }
 
+  if (!analytics) {
+    return (
+      <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 shadow-sm max-w-lg mx-auto mt-12">
+        <h2 className="text-xl font-bold text-slate-800">No Shopping Insights Yet</h2>
+        <p className="text-slate-500 text-sm mt-2">
+          Start browsing products and placing orders to view your personalized spending trends and recommendations.
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -100,6 +112,7 @@ function CustomerAnalytics() {
       />
 
       <ShoppingRecommendations
+        recommendedProducts={analytics.recommended_products}
         recommendations={analytics.recommendations}
       />
 
