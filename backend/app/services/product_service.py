@@ -131,7 +131,8 @@ def get_product_catalogue(db: Session):
         db.query(
             Product,
             Vendor.business_name,
-            Category.category_name
+            Category.category_name,
+            Inventory.stock_quantity
         )
         .join(
             Vendor,
@@ -141,12 +142,16 @@ def get_product_catalogue(db: Session):
             Category,
             Product.category_id == Category.category_id
         )
+        .outerjoin(
+            Inventory,
+            Product.product_id == Inventory.product_id
+        )
         .all()
     )
 
     result = []
 
-    for product, vendor_name, category_name in products:
+    for product, vendor_name, category_name, stock_quantity in products:
 
         result.append({
             "product_id": product.product_id,
@@ -157,7 +162,21 @@ def get_product_catalogue(db: Session):
             "thumbnail_url": product.thumbnail_url,
             "price": product.price,
             "discount_price": product.discount_price,
+            "rating": product.rating,
+            "stock_quantity": stock_quantity if stock_quantity is not None else 0,
+            "sku": product.sku,
+            "description": product.description,
             "product_status": product.product_status,
         })
 
     return result
+
+
+def update_product_status(db: Session, product_id: int, status: str):
+    product = db.query(Product).filter(Product.product_id == product_id).first()
+    if not product:
+        return None
+    product.product_status = status
+    db.commit()
+    db.refresh(product)
+    return product

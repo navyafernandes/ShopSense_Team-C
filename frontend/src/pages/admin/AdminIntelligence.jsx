@@ -45,14 +45,14 @@ function AdminIntelligence() {
 
   };
 
-  if (loading) {
-
+  if (loading || !data) {
     return (
-      <div className="p-10">
-        Loading Marketplace Intelligence...
+      <div className="flex items-center justify-center h-[70vh]">
+        <h2 className="text-xl font-semibold text-slate-600">
+          Loading Marketplace Intelligence...
+        </h2>
       </div>
     );
-
   }
 
   return (

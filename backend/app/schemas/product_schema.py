@@ -42,6 +42,10 @@ class ProductResponse(BaseModel):
         from_attributes = True
 
 
+class ProductStatusUpdate(BaseModel):
+    product_status: str
+
+
 class ProductCatalogueResponse(BaseModel):
     product_id: int
     product_name: str
@@ -51,6 +55,10 @@ class ProductCatalogueResponse(BaseModel):
     thumbnail_url: str | None = None
     price: Decimal
     discount_price: Decimal | None = None
+    rating: Decimal | None = None
+    stock_quantity: int = 0
+    sku: str | None = None
+    description: str | None = None
     product_status: str
 
     class Config:

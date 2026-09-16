@@ -9,10 +9,10 @@ def get_vendor_benchmark(
     db: Session,
     vendor_id: int,
 ):
-    # Revenue of every vendor
+    # Revenue of every vendor in marketplace
     vendor_revenues = (
         db.query(
-            OrderItem.vendor_id,
+            Vendor.vendor_id,
             func.coalesce(
                 func.sum(
                     OrderItem.quantity * OrderItem.price
@@ -20,7 +20,11 @@ def get_vendor_benchmark(
                 0,
             ).label("revenue"),
         )
-        .group_by(OrderItem.vendor_id)
+        .outerjoin(
+            OrderItem,
+            Vendor.vendor_id == OrderItem.vendor_id
+        )
+        .group_by(Vendor.vendor_id)
         .all()
     )
 
@@ -49,15 +53,13 @@ def get_vendor_benchmark(
     market_average = (
         sum(v["revenue"] for v in revenue_list)
         / total_vendors
-    )
+    ) if total_vendors > 0 else 0
 
     vendor_rank = None
-    vendor_revenue = 0
+    vendor_revenue = 0.0
 
     for index, vendor in enumerate(revenue_list):
-
         if vendor["vendor_id"] == vendor_id:
-
             vendor_rank = index + 1
             vendor_revenue = vendor["revenue"]
             break
@@ -72,7 +74,7 @@ def get_vendor_benchmark(
         )
         * 100,
         2,
-    )
+    ) if total_vendors > 0 else 0.0
 
     if percentile >= 90:
         status = "Top Performer"

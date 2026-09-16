@@ -8,6 +8,9 @@ import {
   FaLightbulb,
   FaExclamationTriangle,
   FaFileAlt,
+  FaFilePdf,
+  FaPrint,
+  FaDownload,
 } from "react-icons/fa";
 
 import { generateExecutiveReport } from "../../utils/executiveReport";
@@ -18,6 +21,78 @@ function ExecutiveBI() {
   const [vendors, setVendors] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [exportingPdf, setExportingPdf] = useState(false);
+
+  const handleExportPDF = () => {
+    try {
+      setExportingPdf(true);
+      generateExecutiveReport({
+        sales,
+        inventory,
+        vendors,
+        products,
+        businessScore,
+        businessStatus,
+        managementPriority,
+        managementMessage,
+      });
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      alert("Failed to generate PDF report.");
+    } finally {
+      setExportingPdf(false);
+    }
+  };
+
+  const handleExportCSV = () => {
+    try {
+      const rows = [
+        ["ShopSense Executive BI Metrics Report"],
+        ["Generated Date", new Date().toLocaleString("en-IN")],
+        [],
+        ["Key Metric", "Value"],
+        ["Total Revenue", `Rs. ${Number(sales?.total_revenue || 0).toFixed(2)}`],
+        ["Total Orders", sales?.total_orders || 0],
+        ["Products Sold", sales?.products_sold || 0],
+        ["Average Order Value", `Rs. ${Number(sales?.average_order_value || 0).toFixed(2)}`],
+        ["Operational Health Score", `${businessScore}/100 (${businessStatus})`],
+        ["Management Priority", managementPriority],
+        ["Total Inventory Products", inventory?.total_products || 0],
+        ["Low Stock Products", inventory?.low_stock_products || 0],
+        ["Out of Stock Products", inventory?.out_of_stock_products || 0],
+        [],
+        ["Top Vendors", "Revenue", "Orders", "Products Sold"],
+        ...vendors.map((v) => [v.vendor_name, `Rs. ${Number(v.revenue || 0).toFixed(2)}`, v.orders, v.products_sold]),
+        [],
+        ["Top Products", "Units Sold", "Revenue"],
+        ...products.map((p) => [p.product_name, p.units_sold, `Rs. ${Number(p.revenue || 0).toFixed(2)}`]),
+      ];
+
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        rows
+          .map((e) =>
+            e
+              .map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`)
+              .join(",")
+          )
+          .join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute(
+        "download",
+        `ShopSense_Executive_BI_${new Date().toISOString().slice(0, 10)}.csv`
+      );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("CSV generation failed:", err);
+      alert("Failed to export CSV.");
+    }
+  };
 
   useEffect(() => {
     fetchExecutiveData();
@@ -173,12 +248,31 @@ function ExecutiveBI() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleExportPDF}
+            disabled={exportingPdf}
+            className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:opacity-50"
+          >
+            <FaFilePdf />
+            {exportingPdf ? "Generating..." : "Export PDF"}
+          </button>
 
-          <span className="text-sm font-medium text-slate-600">
-            Marketplace Operational
-          </span>
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            <FaDownload />
+            Export CSV
+          </button>
+
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            <FaPrint />
+            Print
+          </button>
         </div>
 
       </div>
@@ -659,13 +753,24 @@ function ExecutiveBI() {
           </div>
 
 
-          <button
-            onClick={() => window.print()}
-            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-indigo-50"
-          >
-            <FaFileAlt />
-            Print Executive Report
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={handleExportPDF}
+              disabled={exportingPdf}
+              className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
+            >
+              <FaFilePdf />
+              {exportingPdf ? "Generating..." : "Download PDF Report"}
+            </button>
+
+            <button
+              onClick={() => window.print()}
+              className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-slate-900 transition hover:bg-indigo-50"
+            >
+              <FaPrint />
+              Print Report
+            </button>
+          </div>
 
         </div>
 

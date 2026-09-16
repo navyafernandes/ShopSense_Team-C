@@ -162,4 +162,30 @@ def get_customer_orders(
         .all()
     )
 
-    return orders
+    results = []
+    for order in orders:
+        items_data = []
+        for item in order.order_items:
+            items_data.append({
+                "product_id": item.product_id,
+                "product_name": item.product.product_name if item.product else f"Product #{item.product_id}",
+                "brand": item.product.brand if item.product else None,
+                "thumbnail_url": item.product.thumbnail_url if item.product else None,
+                "vendor_name": item.vendor.business_name if item.vendor else None,
+                "quantity": item.quantity,
+                "price": item.price,
+            })
+
+        results.append({
+            "order_id": order.order_id,
+            "order_date": order.order_date,
+            "total_amount": order.total_amount,
+            "order_status": order.order_status,
+            "shipping_address": order.shipping_address,
+            "tracking_number": order.tracking_number,
+            "payment_status": order.payment.payment_status if order.payment else "PENDING",
+            "payment_method": order.payment.payment_method if order.payment else None,
+            "items": items_data,
+        })
+
+    return results

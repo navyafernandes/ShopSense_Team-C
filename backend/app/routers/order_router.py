@@ -31,10 +31,17 @@ def list_orders(
     db: Session = Depends(get_db),
     user = Depends(get_current_user)
 ):
-    return order_service.get_customer_orders(
+    result = order_service.get_customer_orders(
         db,
         user
     )
+    if result == "CUSTOMER_NOT_FOUND":
+        raise HTTPException(
+            status_code=404,
+            detail="Customer profile not found."
+        )
+    return result
+
 
 @router.post(
     "",
@@ -54,7 +61,36 @@ def place_order(
 
     result = create_order(db, order, current_user)
 
-    print(result)
+    if result == "CUSTOMER_NOT_FOUND":
+        raise HTTPException(
+            status_code=404,
+            detail="Customer profile not found."
+        )
+    if result == "CART_NOT_FOUND":
+        raise HTTPException(
+            status_code=404,
+            detail="Cart not found."
+        )
+    if result == "EMPTY_CART":
+        raise HTTPException(
+            status_code=400,
+            detail="Cart is empty."
+        )
+    if result == "PRODUCT_NOT_FOUND":
+        raise HTTPException(
+            status_code=404,
+            detail="Product in cart was not found."
+        )
+    if result == "INVENTORY_NOT_FOUND":
+        raise HTTPException(
+            status_code=404,
+            detail="Inventory record not found."
+        )
+    if result == "INSUFFICIENT_STOCK":
+        raise HTTPException(
+            status_code=400,
+            detail="Insufficient stock for one or more items."
+        )
 
     return result
 

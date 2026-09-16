@@ -11,6 +11,7 @@ from app.schemas.inventory_schema import (
     InventoryUpdate,
     InventoryResponse,
     LowStockResponse,
+    InventoryOverviewResponse,
 )
 
 from app.services.inventory_service import (
@@ -148,7 +149,7 @@ def edit_inventory(
 
 @router.get(
     "",
-    response_model=list[InventoryResponse]
+    response_model=InventoryOverviewResponse
 )
 def view_inventory(
     db: Session = Depends(get_db)

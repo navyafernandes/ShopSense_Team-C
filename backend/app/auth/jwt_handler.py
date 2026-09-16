@@ -38,10 +38,10 @@ def verify_token(token: str):
             algorithms=[ALGORITHM]
         )
 
-        print("✅ Payload:", payload)
+        print("[JWT] Payload:", payload)
 
         return payload
 
     except JWTError as e:
-        print("❌ JWT Error:", str(e))
+        print("[JWT] Error:", str(e))
         return None

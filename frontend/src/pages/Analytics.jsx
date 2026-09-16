@@ -35,7 +35,7 @@ function Analytics() {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (loading || !summary) return <LoadingSpinner />;
 
   return (
     <div className="p-8">

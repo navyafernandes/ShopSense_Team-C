@@ -30,6 +30,10 @@ router = APIRouter(
     "/admin/dashboard",
     response_model=DashboardSummary
 )
+@router.get(
+    "/dashboard",
+    response_model=DashboardSummary
+)
 def dashboard(
     db: Session = Depends(get_db)
 ):

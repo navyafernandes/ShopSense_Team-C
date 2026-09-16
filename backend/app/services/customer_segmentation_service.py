@@ -16,6 +16,7 @@ from app.models.user import User
 from app.models.vendor import Vendor
 
 from app.schemas.customer_segmentation_schema import CustomerSegmentationResponse
+from app.ml.tracker import MLTracker
 
 def get_customer_segments(db: Session, current_user: User):
 
@@ -253,13 +254,32 @@ def get_customer_segments(db: Session, current_user: User):
             "segment": row["segment"]
         })
 
+    # Log ML experiment run
+    MLTracker.log_experiment(
+        experiment_name="Customer_RFM_KMeans_Segmentation",
+        parameters={
+            "vendor_id": vendor.vendor_id,
+            "n_clusters": n_clusters,
+            "features": ["total_spent", "order_count", "average_order_value", "recency_days"],
+            "model": "KMeans(n_init=10, random_state=42)"
+        },
+        metrics={
+            "total_customers": len(df),
+            "silhouette_score": round(float(score), 3),
+            "premium_customers": int(premium_count),
+            "regular_customers": int(regular_count),
+            "new_customers": int(new_count),
+            "inactive_customers": int(inactive_count)
+        }
+    )
+
     return CustomerSegmentationResponse(
-    total_customers=len(df),
-    premium_customers=int(premium_count),
-    regular_customers=int(regular_count),
-    new_customers=int(new_count),
-    inactive_customers=int(inactive_count),
-    silhouette_score=round(float(score), 3),
-    customers=customers
-)
+        total_customers=len(df),
+        premium_customers=int(premium_count),
+        regular_customers=int(regular_count),
+        new_customers=int(new_count),
+        inactive_customers=int(inactive_count),
+        silhouette_score=round(float(score), 3),
+        customers=customers
+    )
         

@@ -27,11 +27,33 @@ router = APIRouter(
 
 
 @router.get(
+    "",
+    response_model=list[VendorResponse]
+)
+@router.get(
     "/",
     response_model=list[VendorResponse]
 )
 def list_vendors(db: Session = Depends(get_db)):
     return get_all_vendors(db)
+
+
+@router.get(
+    "/analytics/customer-segments",
+    response_model=CustomerSegmentationResponse
+)
+def customer_segments(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    if current_user.role != UserRole.VENDOR:
+        raise HTTPException(
+            status_code=403,
+            detail="Only vendors can access customer segmentation."
+        )
+
+    return get_customer_segments(db, current_user)
 
 
 @router.get(
@@ -51,7 +73,6 @@ def vendor_details(
         )
 
     return vendor
-
 
 
 @router.put("/{vendor_id}/status")
@@ -87,21 +108,3 @@ def change_vendor_status(
         )
 
     return vendor
-
-
-@router.get(
-    "/analytics/customer-segments",
-    response_model=CustomerSegmentationResponse
-)
-def customer_segments(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-
-    if current_user.role != UserRole.VENDOR:
-        raise HTTPException(
-            status_code=403,
-            detail="Only vendors can access customer segmentation."
-        )
-
-    return get_customer_segments(db, current_user)

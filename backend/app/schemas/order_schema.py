@@ -38,6 +38,19 @@ class OrderSummaryResponse(BaseModel):
     order: OrderResponse
     items: List[OrderItemResponse]
 
+class OrderItemDetailResponse(BaseModel):
+    product_id: int
+    product_name: str
+    brand: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    vendor_name: Optional[str] = None
+    quantity: int
+    price: Decimal
+
+    class Config:
+        from_attributes = True
+
+
 class OrderListResponse(BaseModel):
     order_id: int
     order_date: datetime
@@ -45,6 +58,9 @@ class OrderListResponse(BaseModel):
     order_status: str
     shipping_address: str
     tracking_number: Optional[str] = None
+    payment_status: Optional[str] = None
+    payment_method: Optional[str] = None
+    items: List[OrderItemDetailResponse] = []
 
     class Config:
         from_attributes = True
